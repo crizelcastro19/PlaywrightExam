@@ -11,7 +11,7 @@ test.describe('Test Website', ()=>{
     });
     
     test('Verify if the user redirect to Shop Dashboard', async({page}) =>{
-        await page.goto('/angularpractice/shop'); 
+        await page.goto(process.env.LOGIN_URL + '/angularpractice/shop'); 
         await shopPage.verifyShopNameHeader();
     });
 
