@@ -19,7 +19,8 @@ export default defineConfig({
     ['list'], // console output
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['allure-playwright', { 
-        outputFolder: path.resolve(process.cwd(), 'allure-results') 
+        // Use Jenkins environment variable if available
+        outputFolder: process.env.ALLURE_RESULTS || path.resolve(process.cwd(), 'allure-results')
     }],
   ],
 
