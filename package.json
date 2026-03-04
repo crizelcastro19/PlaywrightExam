@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "webTest": "npx playwright test --grep @Web --reporter=line,allure-playwright"
+    "webTest": "npx playwright test --project=chromium --reporter=list,allure-playwright"
   },
   "keywords": [],
   "author": "",

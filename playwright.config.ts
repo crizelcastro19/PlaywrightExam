@@ -16,10 +16,10 @@ export default defineConfig({
   },
 
   reporter: [
-    ['list'], // console output
+    ['list'], // console output in terminal
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['allure-playwright', { 
-        // Use Jenkins environment variable if available
+        // Use Jenkins environment variable if set, fallback to project root
         outputFolder: process.env.ALLURE_RESULTS || path.resolve(process.cwd(), 'allure-results')
     }],
   ],
