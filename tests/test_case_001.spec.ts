@@ -10,7 +10,7 @@ test.describe('Test Website', ()=>{
         shopPage = poManager.getShopPage();
     });
     
-    test('@Web Verify if the user redirect to Shop Dashboard', async({page}) =>{
+    test('Verify if the user redirect to Shop Dashboard', async({page}) =>{
         await page.goto('/angularpractice/shop'); 
         await shopPage.verifyShopNameHeader();
     });

@@ -29,7 +29,7 @@ export default defineConfig({
     browserName: 'chromium',
     headless: true,
     storageState: 'auth.json',
-    screenshot: 'only-on-failure',
+    screenshot: 'on',
     trace: 'retain-on-failure',
   },
 
