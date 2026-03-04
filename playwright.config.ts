@@ -1,12 +1,10 @@
 // @ts-check
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 
-/**
- * @see https://playwright.dev/docs/test-configuration
- */
 export default defineConfig({
   testDir: './tests',
   timeout: 40 * 1000,
@@ -19,8 +17,10 @@ export default defineConfig({
 
   reporter: [
     ['list'], // console output
-    ['html', { outputFolder: 'playwright-report', open: 'never' }], // HTML report
-    ['allure-playwright', { outputFolder: 'allure-results' }], // Allure results
+    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['allure-playwright', { 
+        outputFolder: path.resolve(process.cwd(), 'allure-results') 
+    }],
   ],
 
   use: {
@@ -28,8 +28,6 @@ export default defineConfig({
     browserName: 'chromium',
     headless: true,
     storageState: 'auth.json',
-
-    // Capture screenshots and traces for Allure
     screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },

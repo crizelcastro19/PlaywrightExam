@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         NODE_ENV = 'test'
-        ALLURE_RESULTS = 'allure-results'
+        ALLURE_RESULTS = "${WORKSPACE}/allure-results"
         PATH = "/usr/local/bin:$PATH"
     }
 
