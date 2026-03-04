@@ -16,10 +16,10 @@ export default defineConfig({
   },
 
   reporter: [
-    ['list'], // console output in terminal
+    ['list'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
     ['allure-playwright', { 
-        // Use Jenkins environment variable if set, fallback to project root
+        // Write results to Jenkins workspace via environment variable
         outputFolder: process.env.ALLURE_RESULTS || path.resolve(process.cwd(), 'allure-results')
     }],
   ],
@@ -29,7 +29,7 @@ export default defineConfig({
     browserName: 'chromium',
     headless: true,
     storageState: 'auth.json',
-    screenshot: 'on',
+    screenshot: 'only-on-failure',
     trace: 'retain-on-failure',
   },
 

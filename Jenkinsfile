@@ -10,8 +10,8 @@ pipeline {
     stages {
         stage('Clean Previous Results') {
             steps {
-                echo "Cleaning previous test results..."
-                sh 'rm -rf ${ALLURE_RESULTS} allure-report'
+                echo "Cleaning previous results..."
+                sh 'rm -rf ${ALLURE_RESULTS} allure-report playwright-report'
                 sh 'mkdir -p ${ALLURE_RESULTS}'
             }
         }
@@ -32,20 +32,20 @@ pipeline {
         stage('Run Playwright Tests') {
             steps {
                 echo "Running Playwright tests..."
-                // Load environment variables from .env
+
+                // Load .env variables if present
                 sh 'export $(cat .env | xargs) || true'
-                
-                // Run tests
-                sh 'pwd'
-                sh 'ls -la'
+
+                // Run Playwright tests
                 sh 'npx playwright test --project=chromium'
 
-                // Verify results folder
+                // Debug: check Allure results
+                sh 'echo "Listing Allure results folder:"'
                 sh 'ls -la ${ALLURE_RESULTS}'
             }
         }
 
-        stage('Generate Allure Report') {
+        stage('Publish Allure Report') {
             steps {
                 echo "Publishing Allure report in Jenkins..."
                 allure includeProperties: false, results: [[path: "${ALLURE_RESULTS}"]]
