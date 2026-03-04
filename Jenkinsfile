@@ -4,12 +4,15 @@ pipeline {
     environment {
         NODE_ENV = 'test'
         ALLURE_RESULTS = 'allure-results'
+        PATH = "/usr/local/bin:$PATH"
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
                 echo "Installing Node.js dependencies..."
+                sh 'node -v'
+                sh 'npm -v'
                 sh 'npm ci'
             }
         }
