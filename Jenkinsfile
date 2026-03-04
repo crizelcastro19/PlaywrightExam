@@ -8,12 +8,21 @@ pipeline {
     }
 
     stages {
+        stage('Clean Previous Results') {
+            steps {
+                echo "Cleaning previous test results..."
+                sh 'rm -rf ${ALLURE_RESULTS} allure-report'
+            }
+        }
+
         stage('Install Dependencies') {
             steps {
                 echo "Installing Node.js dependencies..."
                 sh 'node -v'
                 sh 'npm -v'
                 sh 'npm ci'
+                echo "Installing Playwright browsers..."
+                sh 'npx playwright install --with-deps'
             }
         }
 
@@ -21,7 +30,7 @@ pipeline {
             steps {
                 echo "Running Playwright tests..."
                 // Generates Allure results in allure-results folder
-                sh 'npx playwright test'
+                sh 'npx playwright test --project=chromium'
             }
             post {
                 always {
@@ -46,6 +55,12 @@ pipeline {
         always {
             echo "Cleaning workspace..."
             cleanWs()
+        }
+        success {
+            echo "✅ Playwright tests completed and Allure report generated successfully!"
+        }
+        failure {
+            echo "❌ Some tests failed. Check Allure report for details."
         }
     }
 }
