@@ -12,6 +12,7 @@ pipeline {
             steps {
                 echo "Cleaning previous test results..."
                 sh 'rm -rf ${ALLURE_RESULTS} allure-report'
+                sh 'mkdir -p ${ALLURE_RESULTS}'
             }
         }
 
@@ -23,22 +24,26 @@ pipeline {
                 sh 'npm ci'
                 echo "Installing Playwright browsers..."
                 sh 'npx playwright install --with-deps'
+                echo "Installing Allure Playwright reporter if not installed..."
+                sh 'npm install --save-dev allure-playwright || true'
             }
         }
 
         stage('Run Playwright Tests') {
             steps {
                 echo "Running Playwright tests..."
-                // Generates Allure results in allure-results folder
+                sh 'pwd'
+                sh 'ls -la'
                 sh 'npx playwright test --project=chromium'
+                sh 'ls -la ${ALLURE_RESULTS}'
             }
             post {
                 always {
-                    echo "Collecting test artifacts for Allure..."
-                    // Copy screenshots & traces to allure-results folder if needed
+                    echo "Collecting screenshots & traces for Allure..."
                     sh 'mkdir -p ${ALLURE_RESULTS}/screenshots || true'
                     sh 'cp -r test-results/screenshots/* ${ALLURE_RESULTS}/screenshots/ || true'
                     sh 'cp -r test-results/traces/* ${ALLURE_RESULTS}/ || true'
+                    sh 'ls -la ${ALLURE_RESULTS}'
                 }
             }
         }
