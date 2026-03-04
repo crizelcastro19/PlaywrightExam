@@ -24,7 +24,7 @@ pipeline {
                 sh 'npm ci'
                 echo "Installing Playwright browsers..."
                 sh 'npx playwright install --with-deps'
-                echo "Installing Allure Playwright reporter if not installed..."
+                echo "Installing Allure Playwright reporter if missing..."
                 sh 'npm install --save-dev allure-playwright || true'
             }
         }
@@ -32,19 +32,16 @@ pipeline {
         stage('Run Playwright Tests') {
             steps {
                 echo "Running Playwright tests..."
+                // Load environment variables from .env
+                sh 'export $(cat .env | xargs) || true'
+                
+                // Run tests
                 sh 'pwd'
                 sh 'ls -la'
                 sh 'npx playwright test --project=chromium'
+
+                // Verify results folder
                 sh 'ls -la ${ALLURE_RESULTS}'
-            }
-            post {
-                always {
-                    echo "Collecting screenshots & traces for Allure..."
-                    sh 'mkdir -p ${ALLURE_RESULTS}/screenshots || true'
-                    sh 'cp -r test-results/screenshots/* ${ALLURE_RESULTS}/screenshots/ || true'
-                    sh 'cp -r test-results/traces/* ${ALLURE_RESULTS}/ || true'
-                    sh 'ls -la ${ALLURE_RESULTS}'
-                }
             }
         }
 
