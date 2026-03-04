@@ -1,0 +1,107 @@
+//import playwright to recognized the test
+const {test, expect} = require('@playwright/test');
+
+test('Page Test Cases', async ({page})=> 
+{
+
+    //chrome
+    await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+    console.log(await page.title());
+    await expect(page).toHaveTitle("LoginPage Practise | Rahul Shetty Academy");
+    const userName = page.locator("#username");
+    const passWord = page.locator("#password");
+    const btnSignIn = page.locator("#signInBtn");
+    const cardTitles = page.locator(".card-body a");
+
+    await userName.fill("rahulshettyacademy");
+    await passWord.fill("Learning@830$3mK2");
+    await btnSignIn.click();
+
+    console.log(cardTitles.first().textContent());
+    await expect(cardTitles.nth(0)).toContainText('iphone');
+    //get all text in list
+    const getAllTitles = await cardTitles.allTextContents();
+    console.log(getAllTitles);
+
+})
+//only use to run specific test case
+test('Browser Test Cases', async ({browser})=> 
+    {
+    
+        //chrome
+        //fresh browser without cookies
+        const context = await browser.newContext();
+        const page = await  context.newPage();
+        const link_register_here = page.getByText('Register here');
+        const txt_fname = page.getByPlaceholder("First Name");
+        const txt_lname = page.getByPlaceholder("Last Name");
+        const txt_email = page.getByPlaceholder("email@example.com");
+        const txt_phone_no = page.getByPlaceholder("enter your number");
+        const drp_occupation = page.locator('[formcontrolname="occupation"]');
+        const rdo_gender = page.getByLabel('Female');
+        const txt_password = page.locator('[formcontrolname="userPassword"]');
+        const txt_confirm_password = page.locator('[formcontrolname="confirmPassword"]');
+        const chk_I_am_18 = page.locator('[formcontrolname="required"]');
+        const btn_register = page.getByRole('button', { name: 'Register'});
+        const txt_header_success = page.getByText('Account Created Successfully');
+        const btn_login = page.getByRole('button', { name: 'Login'});
+        const userName = page.locator("#userEmail");
+        const passWord = page.locator("#userPassword");
+        const btnSignIn = page.locator("#login");
+        const cardTitles = page.locator(".container h5");
+
+        await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
+        await link_register_here.click();
+        await txt_fname.fill("crizel");
+        await txt_lname.fill("castro");
+        await txt_email.fill("test_username1@gmail.com");
+        await txt_phone_no.fill("9175024637");
+        await drp_occupation.selectOption('Scientist');
+        await rdo_gender.check();
+        console.log(rdo_gender.isChecked());
+        await expect(page.getByLabel('Female')).toBeChecked();
+        await txt_password.fill('081912Zel');
+        await txt_confirm_password.fill('081912Zel');
+        await chk_I_am_18.check();
+        await btn_register.click();
+        await expect(txt_header_success).toContainText('Successfully');
+        await btn_login.click();
+
+        await userName.fill("test_username1@gmail.com");
+        await passWord.fill("081912Zel");
+        await btnSignIn.click();
+
+        await expect(cardTitles.nth(0)).toContainText('ADIDAS');
+        //get all text in list
+        const getAllTitles = await cardTitles.allTextContents();
+        console.log(getAllTitles);
+        // asynchronous
+        // await - used until the step is done
+        // used async to function to used the await.
+        // fixtures=browser used the culry braces to recognized the browser
+    
+})
+test('@Child windows hadl', async ({browser})=>
+    {
+       const context = await browser.newContext();
+       const page =  await context.newPage();
+       const userName = page.locator('#username');
+       await page.goto("https://rahulshettyacademy.com/loginpagePractise/");
+       const documentLink = page.locator("[href*='documents-request']");
+    
+       const [newPage]=await Promise.all(
+      [
+         context.waitForEvent('page'),//listen for any new page pending,rejected,fulfilled
+         documentLink.click(),
+      
+      ])//new page is opened
+      
+    
+      const  text = await newPage.locator(".red").textContent();
+       const arrayText = text.split("@")
+       const domain =  arrayText[1].split(" ")[0]
+       //console.log(domain);
+       await page.locator("#username").fill(domain);
+       console.log(await page.locator("#username").inputValue());
+    
+    })   
