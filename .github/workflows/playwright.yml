@@ -2,29 +2,54 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
-
-  install:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - run: npm ci
-      - run: npx playwright install --with-deps
-
   test:
     runs-on: ubuntu-latest
-    needs: install   # 👈 waits for install job
+    timeout-minutes: 60
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # 1️⃣ Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - run: npm ci
-      - run: npx playwright test
+          cache: 'npm'
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4️⃣ Install Playwright browsers (IMPORTANT FIX)
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      # 5️⃣ Show debug info (optional but helpful)
+      - name: Debug Info
+        run: |
+          echo "Node version:"
+          node -v
+          echo "Playwright version:"
+          npx playwright --version
+          echo "Commit running:"
+          git rev-parse HEAD
+
+      # 6️⃣ Run Playwright tests
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      # 7️⃣ Upload Playwright HTML report
+      - name: Upload Playwright Report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
